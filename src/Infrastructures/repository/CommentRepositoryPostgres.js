@@ -1,6 +1,6 @@
-const CommentRepository = require('../../Domains/comments/CommentRepository');
-const AddedComment = require('../../Domains/comments/entities/AddedComment');
-const Comment = require('../../Domains/comments/entities/Comment');
+const CommentRepository = require("../../Domains/comments/CommentRepository");
+const AddedComment = require("../../Domains/comments/entities/AddedComment");
+const Comment = require("../../Domains/comments/entities/Comment");
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
@@ -14,7 +14,7 @@ class CommentRepositoryPostgres extends CommentRepository {
     const id = `comment-${this._idGenerator()}`;
 
     const query = {
-      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6) RETURNING id, content, owner',
+      text: "INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6) RETURNING id, content, owner",
       values: [id, content, owner, threadId, false, new Date().toISOString()],
     };
 
@@ -24,16 +24,8 @@ class CommentRepositoryPostgres extends CommentRepository {
   }
 
   async isCommentExist(commentId) {
-    /**
-     * @TODO 8
-     * Lengkapi kode pada method `isCommentExist` yang berguna untuk
-     * melihat apakah komentar berdasarkan `commentId` sudah ada di database atau belum.
-     *
-     * Method ini harus mengembalikan `true` jika komentar sudah tersedia dan
-     * mengembalikan `false` jika komentar belum tersedia.
-     */
     const query = {
-      text: 'SELECT id FROM comments WHERE id = $1',
+      text: "SELECT id FROM comments WHERE id = $1",
       values: [commentId],
     };
 
@@ -44,7 +36,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async isCommentOwner(commentId, owner) {
     const query = {
-      text: 'SELECT owner FROM comments WHERE id = $1',
+      text: "SELECT owner FROM comments WHERE id = $1",
       values: [commentId],
     };
 
@@ -55,7 +47,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async deleteComment(commentId) {
     const query = {
-      text: 'UPDATE comments SET is_delete = true WHERE id = $1',
+      text: "UPDATE comments SET is_delete = true WHERE id = $1",
       values: [commentId],
     };
 
@@ -79,10 +71,13 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     const result = await this._pool.query(query);
 
-    return result.rows.map((row) => new Comment({
-      ...row,
-      isDelete: row.is_delete,
-    }));
+    return result.rows.map(
+      (row) =>
+        new Comment({
+          ...row,
+          isDelete: row.is_delete,
+        })
+    );
   }
 }
 
