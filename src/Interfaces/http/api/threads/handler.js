@@ -1,39 +1,39 @@
-const AddThreadUseCase = require('../../../../Applications/use_case/AddThreadUseCase');
-const GetThreadUseCase = require('../../../../Applications/use_case/GetThreadUseCase');
+const autoBind = require("auto-bind");
+const AddThreadUseCase = require("../../../../Applications/use_case/AddThreadUseCase");
+const GetThreadByIdUseCase = require("../../../../Applications/use_case/GetThreadByIdUseCase");
 
 class ThreadsHandler {
   constructor(container) {
     this._container = container;
+
+    autoBind(this);
   }
 
   async postThreadHandler(request, h) {
-    const { id: owner } = request.auth.credentials;
-    const useCase = this._container.getInstance(AddThreadUseCase.name);
-    const useCasePayload = {
+    const payload = {
       ...request.payload,
-      owner,
+      owner: request.auth.credentials.id,
     };
 
-    const addedThread = await useCase.execute(useCasePayload);
+    const addThreadUseCase = this._container.getInstance(AddThreadUseCase.name);
+    const addedThread = await addThreadUseCase.execute(payload);
 
-    const response = h.response({
-      status: 'success',
-      data: {
-        addedThread,
-      },
-    });
-
-    response.code(201);
-    return response;
+    return h
+      .response({
+        status: "success",
+        data: {
+          addedThread,
+        },
+      })
+      .code(201);
   }
 
-  async getThreadHandler(request) {
-    const { id } = request.params;
-    const useCase = this._container.getInstance(GetThreadUseCase.name);
-    const thread = await useCase.execute(id);
+  async getThreadByIdHandler(request) {
+    const getThreadByIdUseCase = this._container.getInstance(GetThreadByIdUseCase.name);
+    const thread = await getThreadByIdUseCase.execute(request.params.id);
 
     return {
-      status: 'success',
+      status: "success",
       data: {
         thread,
       },
