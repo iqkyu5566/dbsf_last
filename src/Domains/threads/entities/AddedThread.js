@@ -9,17 +9,14 @@ class AddedThread {
     this.owner = owner;
   }
 
-  /**
-   * @note: no need to catch as ClientError, because this is internal error.
-   */
-  _verifyPayload(payload) {
-    const { id, title, owner } = payload;
-
+  _verifyPayload({ id, title, owner }) {
     if (!id || !title || !owner) {
       throw new Error('ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (typeof id !== 'string' || typeof title !== 'string' || typeof owner !== 'string') {
+    if (typeof id !== 'string'
+        || typeof title !== 'string'
+        || typeof owner !== 'string') {
       throw new Error('ADDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
   }
