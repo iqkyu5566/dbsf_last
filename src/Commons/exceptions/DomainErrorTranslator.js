@@ -23,15 +23,16 @@ DomainErrorTranslator._directories = {
   "ADD_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION": new InvariantError("tidak dapat membuat thread baru karena tipe data tidak sesuai"),
   "ADD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY": new InvariantError("tidak dapat membuat komentar baru karena properti yang dibutuhkan tidak ada"),
   "ADD_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION": new InvariantError("tidak dapat membuat komentar baru karena tipe data tidak sesuai"),
+  "ADD_COMMENT_USE_CASE.THREAD_NOT_FOUND": new NotFoundError("tidak dapat menambahkan komentar karena thread tidak ditemukan"),
   "ADDED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY": new InvariantError("tidak dapat membuat komentar lagi karena properti yang dibutuhkan tidak ada"),
   "ADDED_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION": new InvariantError("tidak dapat membuat komentar lagi karena tipe data tidak sesuai"),
-  "ADD_COMMENT_USE_CASE.THREAD_NOT_FOUND": new NotFoundError("tidak dapat menambahkan komentar karena thread tidak ditemukan"),
   "DELETE_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY": new InvariantError("tidak dapat menghapus komentar karena properti yang dibutuhkan tidak ada"),
   "DELETE_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION": new InvariantError("tidak dapat menghapus komentar karena tipe data tidak sesuai"),
   "DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND": new NotFoundError("tidak dapat menghapus komentar karena thread tidak ditemukan"),
   "DELETE_COMMENT_USE_CASE.COMMENT_NOT_FOUND": new NotFoundError("tidak dapat menghapus komentar karena komentar tidak ditemukan"),
   "DELETE_COMMENT_USE_CASE.COMMENT_NOT_OWNED": new AuthorizationError("tidak dapat menghapus komentar karena Anda tidak memiliki akses"),
   "GET_THREAD_USE_CASE.THREAD_NOT_FOUND": new NotFoundError("thread tidak ditemukan"),
+  "COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED": new NotFoundError("Komen Repo tidak diimplementasi"),
 };
 
 module.exports = DomainErrorTranslator;
