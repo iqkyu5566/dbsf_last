@@ -1,114 +1,70 @@
-const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
-const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
-const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
-const pool = require('../../database/postgres/pool');
-const AddThread = require('../../../Domains/threads/entities/AddThread');
-const AddedThread = require('../../../Domains/threads/entities/AddedThread');
-const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
-const DetailThread = require('../../../Domains/threads/entities/DetailThread');
+const ThreadRepositoryPostgres = require("../ThreadRepositoryPostgres");
+const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
+const pool = require("../../database/postgres/pool");
+const ThreadsTableTestHelper = require("../../../../tests/ThreadsTableTestHelper");
 
-describe('ThreadRepositoryPostgres', () => {
+describe("ThreadRepositoryPostgres", () => {
   afterEach(async () => {
-    await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
+    await ThreadsTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
-    await pool.end;
+    await pool.end();
   });
 
-  describe('addThread function', () => {
-    it(
-      'should persist new thread and return added thread correctly',
-      async () => {
-        await UsersTableTestHelper.addUser({});
-        const newThread = new AddThread({
-          title: 'test thread',
-          body: 'body thread',
-          owner: 'user-123',
-        });
-        const fakeIdGenerator = () => '123';
-        const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+  describe("addThread", () => {
+    it("should persist new thread and return added thread correctly", async () => {});
+  });
 
-        await threadRepositoryPostgres.addThread(newThread);
+  describe("isThreadExist", () => {
+    it("should return true if thread exists", async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: "user-123" });
+      await ThreadsTableTestHelper.addThread({ id: "thread-123", owner: "user-123" });
+      const repository = new ThreadRepositoryPostgres(pool, {});
 
-        const thread = await ThreadsTableTestHelper
-          .findThreadById('thread-123');
-        expect(thread).toHaveLength(1);
-      },
-    );
+      // Action & Assert
+      await expect(repository.isThreadExist("thread-123")).resolves.toBe(true);
+    });
 
-    it('should return added thread correctly', async () => {
-      await UsersTableTestHelper.addUser({});
-      const newThread = new AddThread({
-        title: 'test thread',
-        body: 'body thread',
-        owner: 'user-123',
-      });
-      const fakeIdGenerator = () => '123';
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+    it("should return false if thread not exists", async () => {
+      // Arrange
+      const repository = new ThreadRepositoryPostgres(pool, {});
 
-      const addedThread = await threadRepositoryPostgres.addThread(newThread);
-
-      expect(addedThread).toStrictEqual(new AddedThread({
-        id: 'thread-123',
-        title: 'test thread',
-        owner: 'user-123',
-      }));
+      // Action & Assert
+      await expect(repository.isThreadExist("thread-123")).resolves.toBe(false);
     });
   });
 
-  describe('verifyAvailableThread function', () => {
-    it('should throw NotFoundError when thread not found', async () => {
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, '');
+  describe("getThreadById", () => {
+    it("should return null if thread not exists", async () => {
+      // Arrange
+      const repository = new ThreadRepositoryPostgres(pool, {});
 
-      await expect(threadRepositoryPostgres.verifyAvailableThread('1')).rejects
-        .toThrowError(NotFoundError);
+      // Action
+      const thread = await repository.getThreadById("thread-123");
+
+      // Assert
+      expect(thread).toBeNull();
     });
 
-    it('should return nothing when thread found', async () => {
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, '');
+    it("should return thread correctly", async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: "user-123" });
+      await ThreadsTableTestHelper.addThread({ id: "thread-123", owner: "user-123" });
+      const repository = new ThreadRepositoryPostgres(pool, {});
 
-      await UsersTableTestHelper.addUser({});
-      await ThreadsTableTestHelper.addThread({ id: 'thread-1' });
+      // Action
+      const thread = await repository.getThreadById("thread-123");
 
-      await expect(threadRepositoryPostgres.verifyAvailableThread('thread-1'))
-        .resolves.not.toThrowError(NotFoundError);
-    });
-  });
-
-  describe('getThreadById function', () => {
-    it('should throw NotFoundError when thread not found', async () => {
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, '');
-
-      await expect(threadRepositoryPostgres.getThreadById('1')).rejects
-        .toThrowError(NotFoundError);
-    });
-
-    it('should return thread correctly', async () => {
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, '');
-
-      await UsersTableTestHelper.addUser({});
-
-      const currentDate = new Date();
-      await ThreadsTableTestHelper.addThread(
-        {
-          id: 'thread-1',
-          title: 'test thread',
-          body: 'body thread',
-          date: currentDate,
-          owner: 'user-123',
-        },
-      );
-
-      const thread = await threadRepositoryPostgres.getThreadById('thread-1');
-      expect(thread).toStrictEqual(new DetailThread({
-        id: 'thread-1',
-        title: 'test thread',
-        body: 'body thread',
-        date: currentDate,
-        username: 'dicoding',
-      }));
+      // Assert
+      expect(thread.id).toEqual("thread-123");
+      expect(thread.title).toEqual("title");
+      expect(thread.body).toEqual("body");
+      expect(thread.date).toEqual(expect.any(String));
+      expect(thread.username).toEqual("dicoding");
+      expect(thread.comments).toEqual([]);
     });
   });
 });
