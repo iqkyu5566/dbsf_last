@@ -8,11 +8,15 @@ class GetThreadUseCase {
     const thread = await this._threadRepository.getThreadById(threadId);
 
     if (!thread) {
-      throw new Error('GET_THREAD_USE_CASE.THREAD_NOT_FOUND');
+      throw new Error("GET_THREAD_USE_CASE.THREAD_NOT_FOUND");
     }
 
     const comments = await this._commentRepository.getCommentsByThreadId(threadId);
-    thread.setComments(comments);
+
+    // Memastikan thread memiliki metode setComments sebelum memanggilnya
+    if (thread.setComments) {
+      thread.setComments(comments);
+    }
 
     return thread;
   }

@@ -2,7 +2,6 @@ class NewComment {
   constructor(payload) {
     this._verifyPayload(payload);
 
-    // Lengkapi kodenya ...
     const { threadId, content, owner } = payload;
 
     this.threadId = threadId;
@@ -11,7 +10,6 @@ class NewComment {
   }
 
   _verifyPayload({ threadId, content, owner }) {
-    // Lengkapi kodenya ...
     if (!threadId || !content || !owner) {
       throw new Error("NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY");
     }
@@ -19,6 +17,11 @@ class NewComment {
     if (typeof threadId !== "string" || typeof content !== "string" || typeof owner !== "string") {
       throw new Error("NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION");
     }
+  }
+
+  // Tambahkan metode statis createNewInstance
+  static createNewInstance(payload) {
+    return new NewComment(payload);
   }
 }
 

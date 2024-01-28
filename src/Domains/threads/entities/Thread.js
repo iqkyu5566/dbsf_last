@@ -1,17 +1,15 @@
-const Comment = require('../../comments/entities/Comment');
+const Comment = require("../../comments/entities/Comment");
 
 class Thread {
   constructor(payload) {
     this._verifyPayload(payload);
 
-    const {
-      id, title, body, date, username,
-    } = payload;
+    const { id, title, body, date, username } = payload;
 
     this.id = id;
     this.title = title;
     this.body = body;
-    this.date = date;
+    this.date = date; // Tidak perlu mengubah menjadi Date di sini
     this.username = username;
     this.comments = [];
   }
@@ -19,15 +17,13 @@ class Thread {
   /**
    * note: no need to catch as ClientError, because this is internal error.
    */
-  _verifyPayload({
-    id, title, body, date, username,
-  }) {
+  _verifyPayload({ id, title, body, date, username }) {
     if (!id || !title || !body || !date || !username) {
-      throw new Error('THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+      throw new Error("DETAIL_THREAD.NOT_CONTAIN_NEEDED_PROPERTY");
     }
 
-    if (typeof id !== 'string' || typeof title !== 'string' || typeof body !== 'string' || typeof date !== 'string' || typeof username !== 'string') {
-      throw new Error('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    if (typeof id !== "string" || typeof title !== "string" || typeof body !== "string" || typeof date !== "string" || typeof username !== "string") {
+      throw new Error("DETAIL_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION");
     }
   }
 
@@ -35,13 +31,13 @@ class Thread {
     const isCommentArray = Array.isArray(comments);
 
     if (!isCommentArray) {
-      throw new Error('THREAD.COMMENTS_NOT_ARRAY');
+      throw new Error("THREAD.COMMENTS_NOT_ARRAY");
     }
 
     const isAnyInvalidComment = comments.some((comment) => !(comment instanceof Comment));
 
     if (isAnyInvalidComment) {
-      throw new Error('THREAD.COMMENTS_CONTAINS_INVALID_MEMBER');
+      throw new Error("THREAD.COMMENTS_CONTAINS_INVALID_MEMBER");
     }
 
     this.comments = comments;
