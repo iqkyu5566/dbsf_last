@@ -19,3 +19,4 @@ class AddCommentUseCase {
 }
 
 module.exports = AddCommentUseCase;
+// test
